@@ -22,3 +22,11 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# Project specs & local assistant rules
+.antigravityrules
+*.md
+*.MD
+!README.md
+*.xlsx
+PHASE_*.txt
