@@ -1,0 +1,1097 @@
+{
+	"info": {
+		"_postman_id": "simpresma-api-collection-v1",
+		"name": "SIMPRESMA REST API",
+		"description": "Dokumentasi Lengkap Postman Collection untuk SIMPRESMA (Sistem Informasi Manajemen Prestasi Mahasiswa).\n\n### Cara Penggunaan:\n1. Jalankan server backend: `php artisan serve`\n2. Set environment variable `base_url` (default: `http://localhost:8000`)\n3. Jalankan request di folder **01. Auth** -> token otomatis tersimpan di variable collection.\n4. Gunakan endpoint sesuai role masing-masing.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8000",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "01. Auth",
+			"item": [
+				{
+					"name": "Login - Mahasiswa SI",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var json = pm.response.json();",
+									"    pm.collectionVariables.set('token', json.data.token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"mhs.si@test.com\",\n    \"password\": \"password\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/login",
+							"host": ["{{base_url}}"],
+							"path": ["api", "auth", "login"]
+						},
+						"description": "Login sebagai Mahasiswa prodi SI. Token otomatis disimpan ke variabel `token`."
+					}
+				},
+				{
+					"name": "Login - Verifikator SI",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var json = pm.response.json();",
+									"    pm.collectionVariables.set('token', json.data.token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"verif.si@test.com\",\n    \"password\": \"password\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/login",
+							"host": ["{{base_url}}"],
+							"path": ["api", "auth", "login"]
+						},
+						"description": "Login sebagai Dosen Verifikator prodi SI."
+					}
+				},
+				{
+					"name": "Login - Tendik",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var json = pm.response.json();",
+									"    pm.collectionVariables.set('token', json.data.token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"tendik@test.com\",\n    \"password\": \"password\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/login",
+							"host": ["{{base_url}}"],
+							"path": ["api", "auth", "login"]
+						},
+						"description": "Login sebagai Staff Tendik."
+					}
+				},
+				{
+					"name": "Login - Wadek",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var json = pm.response.json();",
+									"    pm.collectionVariables.set('token', json.data.token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"wadek@test.com\",\n    \"password\": \"password\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/login",
+							"host": ["{{base_url}}"],
+							"path": ["api", "auth", "login"]
+						},
+						"description": "Login sebagai Wakil Dekan (Wadek)."
+					}
+				},
+				{
+					"name": "Get Current User (Me)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/auth/me",
+							"host": ["{{base_url}}"],
+							"path": ["api", "auth", "me"]
+						},
+						"description": "Mendapatkan profil user aktif beserta relasi role & prodi."
+					}
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/auth/logout",
+							"host": ["{{base_url}}"],
+							"path": ["api", "auth", "logout"]
+						},
+						"description": "Revoke token yang sedang aktif."
+					}
+				}
+			]
+		},
+		{
+			"name": "02. Reference Data (Ref)",
+			"item": [
+				{
+					"name": "Get Master Prodi",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/ref/prodi",
+							"host": ["{{base_url}}"],
+							"path": ["api", "ref", "prodi"]
+						},
+						"description": "Mendapatkan daftar master Program Studi (SI, TI, IF)."
+					}
+				},
+				{
+					"name": "Get Tingkatan Lomba",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/ref/tingkatan",
+							"host": ["{{base_url}}"],
+							"path": ["api", "ref", "tingkatan"]
+						},
+						"description": "Mendapatkan master 6 tingkatan lomba (Internasional, Nasional, Provinsi, PT, dll)."
+					}
+				},
+				{
+					"name": "Get Tahapan Lomba",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/ref/tahapan",
+							"host": ["{{base_url}}"],
+							"path": ["api", "ref", "tahapan"]
+						},
+						"description": "Mendapatkan master 4 tahapan lomba (Mendaftar, Lolos Tahap Awal, Finalis, Juara)."
+					}
+				},
+				{
+					"name": "Get Bidang Lomba",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/ref/bidang",
+							"host": ["{{base_url}}"],
+							"path": ["api", "ref", "bidang"]
+						},
+						"description": "Mendapatkan 18 bidang lomba aktif."
+					}
+				},
+				{
+					"name": "Lookup Matriks Konversi",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/ref/matriks?tingkatan_id=1&tahapan_id=2",
+							"host": ["{{base_url}}"],
+							"path": ["api", "ref", "matriks"],
+							"query": [
+								{
+									"key": "tingkatan_id",
+									"value": "1"
+								},
+								{
+									"key": "tahapan_id",
+									"value": "2"
+								}
+							]
+						},
+						"description": "Mendapatkan batas konversi SKS (min_sks, max_sks) dan huruf_nilai untuk kombinasi tingkatan dan tahapan."
+					}
+				},
+				{
+					"name": "Get Mata Kuliah by Bidang & Prodi",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/ref/mata-kuliah?bidang_id=6&prodi_id=1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "ref", "mata-kuliah"],
+							"query": [
+								{
+									"key": "bidang_id",
+									"value": "6"
+								},
+								{
+									"key": "prodi_id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Mendapatkan daftar mata kuliah yang relevan berdasarkan bidang lomba dan program studi mahasiswa."
+					}
+				}
+			]
+		},
+		{
+			"name": "03. Modul Mahasiswa",
+			"item": [
+				{
+					"name": "List Pengajuan Saya",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/mahasiswa/pengajuan?page=1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "mahasiswa", "pengajuan"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Menampilkan riwayat pengajuan milik mahasiswa yang sedang login (paginated)."
+					}
+				},
+				{
+					"name": "Submit Pengajuan Baru",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nama_tim\": \"Tim Hackathon SI\",\n    \"no_whatsapp\": \"081234567890\",\n    \"nama_lomba\": \"Gemastik XVII 2026\",\n    \"bidang_id\": 6,\n    \"tingkatan_id\": 1,\n    \"tahapan_id\": 2,\n    \"detail_juara\": \"Juara 3\",\n    \"mata_kuliah_ids\": [1],\n    \"link_sertifikat\": \"https://drive.google.com/file/d/sertifikat-gemastik.pdf\",\n    \"status_surat_tugas_mahasiswa\": 1,\n    \"link_surat_tugas_mahasiswa\": \"https://drive.google.com/file/d/st-mhs.pdf\",\n    \"status_surat_tugas_dosen\": 1,\n    \"link_surat_tugas_dosen\": \"https://drive.google.com/file/d/st-dosen.pdf\",\n    \"link_poster\": \"https://drive.google.com/file/d/poster.jpg\",\n    \"link_sosmed\": \"https://instagram.com/p/gemastik2026\",\n    \"keterangan\": \"Pengajuan konversi SKS dari lomba Gemastik\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/mahasiswa/pengajuan",
+							"host": ["{{base_url}}"],
+							"path": ["api", "mahasiswa", "pengajuan"]
+						},
+						"description": "Submit pengajuan prestasi baru. Seluruh bukti dokumen berupa tautan URL (zero file upload)."
+					}
+				},
+				{
+					"name": "Detail Pengajuan Saya",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/mahasiswa/pengajuan/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "mahasiswa", "pengajuan", "1"]
+						},
+						"description": "Melihat detail pengajuan milik sendiri (termasuk hasil nilai jika status telah 'selesai')."
+					}
+				}
+			]
+		},
+		{
+			"name": "04. Modul Verifikator",
+			"item": [
+				{
+					"name": "List Pengajuan Pending (Scope Prodi)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/verifikator/pengajuan?page=1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "verifikator", "pengajuan"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Menampilkan daftar pengajuan berstatus 'pending' yang masuk ke dalam scope Program Studi verifikator login."
+					}
+				},
+				{
+					"name": "Detail Pengajuan (Verifikator)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/verifikator/pengajuan/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "verifikator", "pengajuan", "1"]
+						},
+						"description": "Melihat detail lengkap dokumen pengajuan mahasiswa untuk diverifikasi."
+					}
+				},
+				{
+					"name": "Terima Pengajuan",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/verifikator/pengajuan/1/terima",
+							"host": ["{{base_url}}"],
+							"path": ["api", "verifikator", "pengajuan", "1", "terima"]
+						},
+						"description": "Menerima pengajuan prestasi (status: pending -> diterima). Pengajuan selanjutnya akan muncul di dashboard Tendik."
+					}
+				},
+				{
+					"name": "Tolak Pengajuan",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"feedback_verifikator\": \"Dokumen surat tugas tidak ditandatangani oleh pejabat berwenang. Mohon perbaiki dan ajukan ulang.\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/verifikator/pengajuan/1/tolak",
+							"host": ["{{base_url}}"],
+							"path": ["api", "verifikator", "pengajuan", "1", "tolak"]
+						},
+						"description": "Menolak pengajuan prestasi (status: pending -> ditolak). Field `feedback_verifikator` wajib diisi."
+					}
+				}
+			]
+		},
+		{
+			"name": "05. Modul Tendik",
+			"item": [
+				{
+					"name": "List Pengajuan Diterima",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/tendik/pengajuan?page=1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "tendik", "pengajuan"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Menampilkan seluruh antrean pengajuan berstatus 'diterima' dari semua prodi yang siap difinalisasi."
+					}
+				},
+				{
+					"name": "Detail Pengajuan (Tendik)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/tendik/pengajuan/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "tendik", "pengajuan", "1"]
+						},
+						"description": "Melihat detail pengajuan beserta referensi wajib `snapshot_huruf_nilai` untuk penginputan nilai."
+					}
+				},
+				{
+					"name": "Finalisasi Konversi Nilai",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nilai_per_mk\": [\n        {\n            \"mk_id\": 1,\n            \"huruf_nilai\": \"AB\"\n        }\n    ],\n    \"link_sk_konversi\": \"https://siakad.univ.ac.id/sk/2026/sk-konversi-12345.pdf\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/tendik/pengajuan/1/finalisasi",
+							"host": ["{{base_url}}"],
+							"path": ["api", "tendik", "pengajuan", "1", "finalisasi"]
+						},
+						"description": "Finalisasi konversi SKS (status: diterima -> selesai). Huruf nilai yang diinput wajib sama persis dengan `snapshot_huruf_nilai`."
+					}
+				}
+			]
+		},
+		{
+			"name": "06. Modul Wadek",
+			"item": [
+				{
+					"name": "Get Semua Matriks Konversi",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/wadek/matriks",
+							"host": ["{{base_url}}"],
+							"path": ["api", "wadek", "matriks"]
+						},
+						"description": "Menampilkan seluruh 24 kombinasi baris matriks konversi (Tingkatan x Tahapan)."
+					}
+				},
+				{
+					"name": "Update Matriks Konversi",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"min_sks\": 3,\n    \"max_sks\": 4,\n    \"huruf_nilai\": \"A\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/wadek/matriks/2",
+							"host": ["{{base_url}}"],
+							"path": ["api", "wadek", "matriks", "2"]
+						},
+						"description": "Mengubah aturan min/max SKS dan huruf nilai untuk baris matriks tertentu."
+					}
+				},
+				{
+					"name": "List Verifikator Aktif",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/wadek/verifikator",
+							"host": ["{{base_url}}"],
+							"path": ["api", "wadek", "verifikator"]
+						},
+						"description": "Menampilkan daftar dosen verifikator aktif per program studi."
+					}
+				},
+				{
+					"name": "Assign Dosen Verifikator",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"user_id\": 4,\n    \"prodi_id\": 1\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/wadek/verifikator",
+							"host": ["{{base_url}}"],
+							"path": ["api", "wadek", "verifikator"]
+						},
+						"description": "Menugaskan user/dosen menjadi verifikator prodi tertentu (otomatis memberikan role verifikator)."
+					}
+				},
+				{
+					"name": "Cabut Verifikator",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/wadek/verifikator/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "wadek", "verifikator", "1"]
+						},
+						"description": "Mencabut penugasan verifikator dari prodi (set is_active=0)."
+					}
+				},
+				{
+					"name": "List Mapping Bidang - Mata Kuliah",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/wadek/bidang-mata-kuliah?bidang_id=6&prodi_id=1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "wadek", "bidang-mata-kuliah"],
+							"query": [
+								{
+									"key": "bidang_id",
+									"value": "6"
+								},
+								{
+									"key": "prodi_id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Melihat mapping bidang lomba ke mata kuliah (dapat difilter by bidang_id / prodi_id)."
+					}
+				},
+				{
+					"name": "Tambah Mapping Bidang - Mata Kuliah",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"bidang_id\": 6,\n    \"mata_kuliah_id\": 1\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/wadek/bidang-mata-kuliah",
+							"host": ["{{base_url}}"],
+							"path": ["api", "wadek", "bidang-mata-kuliah"]
+						},
+						"description": "Menambahkan relasi baru antara bidang lomba dan mata kuliah."
+					}
+				},
+				{
+					"name": "Hapus Mapping Bidang - Mata Kuliah",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/wadek/bidang-mata-kuliah/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "wadek", "bidang-mata-kuliah", "1"]
+						},
+						"description": "Menghapus relasi mapping bidang lomba dan mata kuliah."
+					}
+				}
+			]
+		},
+		{
+			"name": "07. Shared & Dashboard",
+			"item": [
+				{
+					"name": "Statistik Pengajuan per Prodi",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/dashboard/statistik",
+							"host": ["{{base_url}}"],
+							"path": ["api", "dashboard", "statistik"]
+						},
+						"description": "Mendapatkan statistik distribusi total pengajuan & persentase per prodi serta status breakdown (dapat diakses seluruh role login)."
+					}
+				},
+				{
+					"name": "Direktori Verifikator per Prodi",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/direktori-verifikator",
+							"host": ["{{base_url}}"],
+							"path": ["api", "direktori-verifikator"]
+						},
+						"description": "Mendapatkan direktori dosen verifikator aktif yang dikelompokkan berdasarkan program studi (dapat diakses seluruh role login)."
+					}
+				}
+			]
+		}
+	]
+}

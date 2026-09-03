@@ -1,0 +1,127 @@
+# PHASE F10 IMPLEMENTATION PROMPT
+
+Kamu adalah AI code generator untuk sistem SIMPRESMA (Laravel 11 + React 18 TypeScript).
+
+## TASK OVERVIEW
+Implementasikan 2 fitur baru di Phase F10:
+1. Data Export Engine (Excel/CSV) untuk Wadek dan Tendik
+2. Telegram Bot Notification untuk update status pengajuan
+
+## TECH STACK
+- Backend: Laravel 11, Sanctum, Events/Listeners
+- Frontend: React 18, TypeScript 5, Vite 5, Shadcn/ui, Zustand
+- Package: maatwebsite/excel v3.1
+
+## REQUIREMENT SUMMARY
+
+### Feature 1: Export Excel/CSV
+- **Endpoint**: GET /api/wadek/export, GET /api/tendik/export
+- **Format**: .xlsx (default), .csv
+- **Filter**: ?prodi=SI&status=diterima&format=xlsx
+- **Kolom (17)**: No, NIM, Nama Mahasiswa, Program Studi, Nama Lomba, Bidang Lomba, Tingkatan, Tahapan/Capaian, Tanggal Pengajuan, Status, SKS Dikonversi, Mata Kuliah, Nilai Akhir, Link Sertifikat, Link SK, Verifikator, Tanggal Verifikasi
+- **Akses**:
+  - Wadek: Semua data
+  - Tendik: Hanya status "diterima" dan "selesai"
+- **Frontend**: Component <ExportButton> dengan dropdown Excel/CSV
+
+### Feature 2: Telegram Notification
+- **Trigger Notifikasi**:
+  - Ke Mahasiswa: status → "diterima", "ditolak", "selesai"
+  - Ke Verifikator: pengajuan baru "pending" dari prodi binaannya
+  - Ke Tendik: pengajuan baru "diterima"
+- **Setup**:
+  - Migration: tambah kolom `telegram_chat_id` di tabel `users`
+  - Service: TelegramService dengan method sendMessage()
+  - Event: PengajuanStatusChanged
+  - Listener: SendTelegramNotification
+- **Webhook**: POST /api/telegram/webhook (handle command /start untuk dapatkan chat_id)
+- **Frontend**: Component <TelegramConnect> di halaman Profil dengan flow:
+  1. User buka bot @simpresma_unej_bot, kirim /start
+  2. Bot balas dengan Chat ID
+  3. User copy-paste Chat ID ke form
+  4. POST /api/auth/connect-telegram
+  5. Tampilkan status "Terhubung" dengan tombol disconnect
+
+## FILE STRUCTURE
+
+### Backend Files to Create:
+1. app/Exports/PengajuanExport.php
+2. app/Services/TelegramService.php
+3. app/Events/PengajuanStatusChanged.php
+4. app/Listeners/SendTelegramNotification.php
+5. app/Http/Controllers/TelegramWebhookController.php
+6. database/migrations/xxxx_add_telegram_chat_id_to_users_table.php
+7. config/services.php (tambahkan config telegram)
+
+### Backend Files to Update:
+1. app/Http/Controllers/WadekController.php → tambah method export()
+2. app/Http/Controllers/TendikController.php → tambah method export()
+3. app/Http/Controllers/AuthController.php → tambah method connectTelegram() dan disconnectTelegram()
+4. app/Http/Controllers/VerifikatorController.php → trigger event di method terima() dan tolak()
+5. app/Providers/EventServiceProvider.php → register event listener
+6. routes/api.php → tambah route export dan telegram webhook
+
+### Frontend Files to Create:
+1. src/components/shared/ExportButton.tsx
+2. src/components/shared/TelegramConnect.tsx
+3. src/app/(shared)/profile/page.tsx (jika belum ada)
+
+### Frontend Files to Update:
+1. src/app/(wadek)/dashboard/page.tsx → tambah <ExportButton endpoint="/wadek/export" />
+2. src/app/(tendik)/dashboard/page.tsx → tambah <ExportButton endpoint="/tendik/export" />
+
+### Environment Variables:
+Backend .env:
+
+TELEGRAM_BOT_TOKEN=8860236314:AAGBuT-B334-gmW0bxNaB4L2v3oc2Si0h1s
+TELEGRAM_BOT_USERNAME=simpresma_unej_bot
+APP_URL=http://localhost:8000
+
+
+Frontend .env:
+VITE_TELEGRAM_BOT_USERNAME=simpresma_unej_bot
+
+
+## IMPLEMENTATION NOTES
+
+1. **Export Class**: Gunakan FromCollection + WithHeadings + WithMapping dari maatwebsite/excel
+2. **Download Response**: Set header Content-Disposition untuk trigger browser download
+3. **Telegram API**: Direct HTTP POST ke https://api.telegram.org/bot{TOKEN}/sendMessage
+4. **Event Dispatch**: Gunakan event(new PengajuanStatusChanged(...)) setelah update status
+5. **Error Handling**: Jika Telegram API gagal, log error tapi jangan block proses utama
+6. **Frontend API Call**: Gunakan fetch() dengan responseType blob untuk download file
+
+## VALIDATION CHECKLIST
+
+Export Feature:
+- [ ] Wadek bisa download semua data dalam format Excel
+- [ ] Wadek bisa download semua data dalam format CSV
+- [ ] Tendik hanya bisa download data status "diterima" dan "selesai"
+- [ ] Filter prodi dan status berfungsi
+- [ ] File Excel memiliki 17 kolom sesuai spec
+- [ ] Nama file otomatis: laporan-prestasi-YYYY-MM-DD-HHmmss.xlsx
+
+Telegram Feature:
+- [ ] Migration berhasil, kolom telegram_chat_id ada di tabel users
+- [ ] Bot @simpresma_unej_bot respond /start dengan Chat ID
+- [ ] User bisa connect Telegram via halaman Profil
+- [ ] User bisa disconnect Telegram
+- [ ] Mahasiswa terima notif saat status → "diterima"
+- [ ] Mahasiswa terima notif saat status → "ditolak"
+- [ ] Mahasiswa terima notif saat status → "selesai"
+- [ ] Verifikator terima notif saat ada pengajuan baru "pending"
+- [ ] Tendik terima notif saat ada pengajuan "diterima"
+
+## REFERENCE
+Lihat detail lengkap di file: simpresma/docs/PHASE_F10_SPEC.md
+
+## EXECUTION INSTRUCTIONS
+1. Baca seluruh spec dengan teliti
+2. Generate semua file backend sesuai struktur di atas
+3. Generate semua file frontend sesuai struktur di atas
+4. Update file yang sudah ada dengan perubahan minimal (jangan refactor yang tidak perlu)
+5. Pastikan semua import statement benar
+6. Test setiap endpoint sebelum mark sebagai selesai
+7. Berikan instruksi setup untuk environment variables
+
+Generate code sekarang dengan style yang konsisten dengan codebase SIMPRESMA yang sudah ada.
