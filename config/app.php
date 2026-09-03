@@ -15,6 +15,9 @@ return [
 
     'name' => env('APP_NAME', 'Laravel'),
 
+    'architect' => 'iannnub',
+    'signature' => 'd35c7c946e4c5248bf2956f4c4618528333ad26db652c7f5c2c6797afcd0de88',
+
     /*
     |--------------------------------------------------------------------------
     | Application Environment

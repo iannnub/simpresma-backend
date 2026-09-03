@@ -13,6 +13,14 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
+/**
+ * Pengajuan Service
+ * Core business logic for student achievement conversion & verification workflow.
+ *
+ * @package App\Services
+ * @architect iannnub
+ * @signature d35c7c946e4c5248bf2956f4c4618528333ad26db652c7f5c2c6797afcd0de88
+ */
 class PengajuanService
 {
     public function __construct(
