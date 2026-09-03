@@ -28,3 +28,6 @@ Thumbs.db
 !README.md
 *.xlsx
 PHASE_*.txt
+SIMPRESMA_Postman_Collection.json
+openapi.json
+public/openapi.json
