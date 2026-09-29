@@ -27,7 +27,7 @@ class FinalisasiPengajuanRequest extends FormRequest
             'nilai_per_mk'               => ['nullable', 'array'],
             'nilai_per_mk.*.mk_id'       => ['required_with:nilai_per_mk', 'integer', 'exists:mata_kuliah,id'],
             'nilai_per_mk.*.huruf_nilai' => ['required_with:nilai_per_mk', 'string', 'max:5'],
-            'link_sk_konversi'           => ['nullable', 'url', 'max:2048'],
+            'link_sk_konversi'           => ['nullable', 'url', 'max:2048', new \App\Rules\SafeUrl()],
             'catatan_tendik'             => ['nullable', 'string', 'max:1000'],
         ];
     }

@@ -25,14 +25,14 @@ class StorePengajuanRequest extends FormRequest
             'mata_kuliah_ids'              => 'nullable|array',
             'mata_kuliah_ids.*'            => 'integer|exists:mata_kuliah,id',
             // Dokumen link / URL (zero upload file) - WAJIB (Mandatory)
-            'link_sertifikat'              => 'required|url|max:500',
+            'link_sertifikat'              => ['required', 'url', 'max:500', new \App\Rules\SafeUrl()],
             'status_surat_tugas_mahasiswa' => 'nullable|boolean',
-            'link_surat_tugas_mahasiswa'   => 'required|url|max:500',
+            'link_surat_tugas_mahasiswa'   => ['required', 'url', 'max:500', new \App\Rules\SafeUrl()],
             'status_surat_tugas_dosen'     => 'nullable|boolean',
-            'link_surat_tugas_dosen'       => 'required|url|max:500',
-            'link_poster'                  => 'required|url|max:500',
-            'link_sosmed'                  => 'required|url|max:500',
-            'keterangan'                   => 'nullable|string',
+            'link_surat_tugas_dosen'       => ['required', 'url', 'max:500', new \App\Rules\SafeUrl()],
+            'link_poster'                  => ['required', 'url', 'max:500', new \App\Rules\SafeUrl()],
+            'link_sosmed'                  => ['required', 'url', 'max:500', new \App\Rules\SafeUrl()],
+            'keterangan'                   => 'nullable|string|max:1000',
         ];
     }
 

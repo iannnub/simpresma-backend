@@ -10,15 +10,44 @@ use Illuminate\Support\Facades\Route;
 */
 
 // ─── Public (tanpa auth) ─────────────────────────────────────────────────
+Route::get('health', function () {
+    $dbOk = true;
+    try {
+        \Illuminate\Support\Facades\DB::connection()->getPdo();
+    } catch (\Throwable) {
+        $dbOk = false;
+    }
+
+    $cacheOk = true;
+    try {
+        \Illuminate\Support\Facades\Cache::put('health_check', true, 10);
+        $cacheOk = \Illuminate\Support\Facades\Cache::get('health_check') === true;
+    } catch (\Throwable) {
+        $cacheOk = false;
+    }
+
+    $allHealthy = $dbOk && $cacheOk;
+
+    return response()->json([
+        'status'    => $allHealthy ? 'healthy' : 'unhealthy',
+        'timestamp' => now()->toISOString(),
+        'services'  => [
+            'database' => $dbOk ? 'connected' : 'disconnected',
+            'cache'    => $cacheOk ? 'connected' : 'disconnected',
+            'telegram' => !empty(config('services.telegram.bot_token')) ? 'configured' : 'unconfigured',
+        ],
+    ], $allHealthy ? 200 : 503);
+});
+
 Route::prefix('auth')->group(function () {
-    Route::post('login', [AuthController::class, 'login']);
+    Route::post('login', [AuthController::class, 'login'])->middleware('throttle:login');
 });
 
 // Telegram Webhook (tanpa auth — Telegram tidak mengirim Bearer token)
-Route::post('telegram/webhook', [\App\Http\Controllers\TelegramWebhookController::class, 'handle']);
+Route::post('telegram/webhook', [\App\Http\Controllers\TelegramWebhookController::class, 'handle'])->middleware('throttle:telegram-webhook');
 
 // ─── Auth Protected ──────────────────────────────────────────────────────
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
 
     // Auth
     Route::prefix('auth')->group(function () {
@@ -42,7 +71,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Mahasiswa
     Route::middleware('role:mahasiswa')->prefix('mahasiswa')->group(function () {
         Route::get('pengajuan', [\App\Http\Controllers\Mahasiswa\PengajuanController::class, 'index']);
-        Route::post('pengajuan', [\App\Http\Controllers\Mahasiswa\PengajuanController::class, 'store']);
+        Route::post('pengajuan', [\App\Http\Controllers\Mahasiswa\PengajuanController::class, 'store'])->middleware('throttle:submissions');
         Route::get('pengajuan/{id}', [\App\Http\Controllers\Mahasiswa\PengajuanController::class, 'show']);
     });
 
