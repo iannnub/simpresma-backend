@@ -78,25 +78,25 @@ class PengajuanService
             $pengajuan = Pengajuan::create([
                 'user_id'                      => $mahasiswa->id,
                 'prodi_id'                     => $mahasiswa->prodi_id,
-                'nama_tim'                     => $data['nama_tim'] ?? null,
-                'no_whatsapp'                  => $data['no_whatsapp'],
-                'nama_lomba'                   => $data['nama_lomba'],
+                'nama_tim'                     => $this->sanitizeText($data['nama_tim'] ?? null),
+                'no_whatsapp'                  => trim($data['no_whatsapp']),
+                'nama_lomba'                   => $this->sanitizeText($data['nama_lomba']),
                 'bidang_id'                    => $data['bidang_id'],
                 'tingkatan_id'                 => $data['tingkatan_id'],
                 'tahapan_id'                   => $data['tahapan_id'],
                 'semester'                     => $data['semester'] ?? null,
-                'detail_juara'                 => $data['detail_juara'] ?? null,
+                'detail_juara'                 => $this->sanitizeText($data['detail_juara'] ?? null),
                 'snapshot_min_sks'             => $hasConversion ? $matriks->min_sks : null,
                 'snapshot_max_sks'             => $hasConversion ? $matriks->max_sks : null,
                 'snapshot_huruf_nilai'         => $hasConversion ? $matriks->huruf_nilai : null,
-                'link_sertifikat'              => $data['link_sertifikat'],
+                'link_sertifikat'              => trim($data['link_sertifikat']),
                 'status_surat_tugas_mahasiswa' => !empty($data['link_surat_tugas_mahasiswa']) ? 1 : (int) ($data['status_surat_tugas_mahasiswa'] ?? 0),
-                'link_surat_tugas_mahasiswa'   => $data['link_surat_tugas_mahasiswa'] ?? null,
+                'link_surat_tugas_mahasiswa'   => isset($data['link_surat_tugas_mahasiswa']) ? trim($data['link_surat_tugas_mahasiswa']) : null,
                 'status_surat_tugas_dosen'     => !empty($data['link_surat_tugas_dosen']) ? 1 : (int) ($data['status_surat_tugas_dosen'] ?? 0),
-                'link_surat_tugas_dosen'       => $data['link_surat_tugas_dosen'] ?? null,
-                'link_poster'                  => $data['link_poster'] ?? null,
-                'link_sosmed'                  => $data['link_sosmed'] ?? null,
-                'keterangan'                   => $data['keterangan'] ?? null,
+                'link_surat_tugas_dosen'       => isset($data['link_surat_tugas_dosen']) ? trim($data['link_surat_tugas_dosen']) : null,
+                'link_poster'                  => isset($data['link_poster']) ? trim($data['link_poster']) : null,
+                'link_sosmed'                  => isset($data['link_sosmed']) ? trim($data['link_sosmed']) : null,
+                'keterangan'                   => $this->sanitizeText($data['keterangan'] ?? null),
                 'status'                       => 'pending',
             ]);
 
@@ -111,11 +111,6 @@ class PengajuanService
 
             return $pengajuan->load(['mataKuliahs', 'bidang', 'tingkatan', 'tahapan', 'prodi', 'mahasiswa']);
         });
-
-        // Kirim notifikasi Telegram (ke Mahasiswa & Verifikator) saat pengajuan berhasil disubmit
-        event(new \App\Events\PengajuanStatusChanged($result, 'pending', $mahasiswa));
-
-        return $result;
     }
 
     /**
@@ -195,7 +190,7 @@ class PengajuanService
 
         $pengajuan->update([
             'status'               => 'diterima',
-            'feedback_verifikator' => $feedback ?: 'Pengajuan telah diperiksa dan disetujui oleh Dosen Verifikator.',
+            'feedback_verifikator' => $feedback ? strip_tags(trim($feedback)) : 'Pengajuan telah diperiksa dan disetujui oleh Dosen Verifikator.',
             'verifikator_id'       => $verifikator->id,
             'verified_at'          => now(),
         ]);
@@ -223,7 +218,8 @@ class PengajuanService
             ]);
         }
 
-        if (trim($feedback) === '') {
+        $cleanFeedback = strip_tags(trim($feedback));
+        if ($cleanFeedback === '') {
             throw ValidationException::withMessages([
                 'feedback_verifikator' => ['Feedback atau alasan penolakan wajib diisi jika menolak pengajuan.'],
             ]);
@@ -231,7 +227,7 @@ class PengajuanService
 
         $pengajuan->update([
             'status'               => 'ditolak',
-            'feedback_verifikator' => $feedback,
+            'feedback_verifikator' => $cleanFeedback,
             'verifikator_id'       => $verifikator->id,
             'verified_at'          => now(),
         ]);
@@ -289,8 +285,8 @@ class PengajuanService
             }
 
             $pengajuan->update([
-                'link_sk_konversi' => $data['link_sk_konversi'] ?? null,
-                'catatan_tendik'   => $data['catatan_tendik'] ?? null,
+                'link_sk_konversi' => isset($data['link_sk_konversi']) ? trim($data['link_sk_konversi']) : null,
+                'catatan_tendik'   => isset($data['catatan_tendik']) ? strip_tags(trim($data['catatan_tendik'])) : null,
                 'tendik_id'        => $tendik->id,
                 'processed_at'     => now(),
                 'status'           => 'selesai',
@@ -318,5 +314,20 @@ class PengajuanService
         if (!$isInScope) {
             abort(403, 'Anda tidak memiliki wewenang verifikasi untuk program studi pengajuan ini.');
         }
+    }
+
+    /**
+     * Sanitasi teks dari tag HTML dan blok script berbahaya.
+     */
+    public function sanitizeText(?string $input): ?string
+    {
+        if ($input === null) {
+            return null;
+        }
+
+        $cleaned = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', '', $input);
+        $cleaned = strip_tags($cleaned);
+
+        return trim($cleaned);
     }
 }
