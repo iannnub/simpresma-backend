@@ -1,0 +1,1998 @@
+{
+  "info": {
+    "name": "SIMPRESMA Automated API Test Suite",
+    "description": "Comprehensive end-to-end API test suite for SIMPRESMA system across all 5 roles and public endpoints.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "01. System Health",
+      "item": [
+        {
+          "name": "Check API Health Status",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/health",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "health"
+              ]
+            },
+            "description": ""
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response time is acceptable (< 5000ms)\", function () { pm.expect(pm.response.responseTime).to.be.below(5000); });",
+                  "pm.test(\"Response is valid JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Status is healthy\", function () { var j = pm.response.json(); pm.expect(j.status).to.eql(\"healthy\"); });",
+                  "pm.test(\"Services are connected\", function () { var j = pm.response.json(); pm.expect(j.services.database).to.eql(\"connected\"); pm.expect(j.services.cache).to.eql(\"connected\"); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "02. Authentication",
+      "item": [
+        {
+          "name": "Login as Mahasiswa SI",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"mhs.si@test.com\",\n  \"password\": \"password\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response time is acceptable (< 5000ms)\", function () { pm.expect(pm.response.responseTime).to.be.below(5000); });",
+                  "pm.test(\"Response is valid JSON\", function () { pm.response.to.be.json; });",
+                  "var j = pm.response.json(); pm.test(\"Returns token\", function () { pm.expect(j.data.token).to.be.a('string'); pm.environment.set(\"mhs_token\", j.data.token); });",
+                  "pm.test(\"User is Mahasiswa\", function () { pm.expect(j.data.user.nama).to.include(\"Mahasiswa\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login as Verifikator SI",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"verif.si@test.com\",\n  \"password\": \"password\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response time is acceptable (< 5000ms)\", function () { pm.expect(pm.response.responseTime).to.be.below(5000); });",
+                  "pm.test(\"Response is valid JSON\", function () { pm.response.to.be.json; });",
+                  "var j = pm.response.json(); pm.environment.set(\"verif_token\", j.data.token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login as Tendik",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"tendik@test.com\",\n  \"password\": \"password\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response time is acceptable (< 5000ms)\", function () { pm.expect(pm.response.responseTime).to.be.below(5000); });",
+                  "pm.test(\"Response is valid JSON\", function () { pm.response.to.be.json; });",
+                  "var j = pm.response.json(); pm.environment.set(\"tendik_token\", j.data.token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login as Wadek",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"wadek@test.com\",\n  \"password\": \"password\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response time is acceptable (< 5000ms)\", function () { pm.expect(pm.response.responseTime).to.be.below(5000); });",
+                  "pm.test(\"Response is valid JSON\", function () { pm.response.to.be.json; });",
+                  "var j = pm.response.json(); pm.environment.set(\"wadek_token\", j.data.token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login as Admin",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@simpresma.unej.ac.id\",\n  \"password\": \"admin123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response time is acceptable (< 5000ms)\", function () { pm.expect(pm.response.responseTime).to.be.below(5000); });",
+                  "pm.test(\"Response is valid JSON\", function () { pm.response.to.be.json; });",
+                  "var j = pm.response.json(); pm.environment.set(\"admin_token\", j.data.token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login Failed (Invalid Password)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"mhs.si@test.com\",\n  \"password\": \"wrongpassword\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 422 or 401\", function () { pm.expect([401, 422]).to.include(pm.response.code); });",
+                  "pm.test(\"Returns error response\", function () { var j = pm.response.json(); pm.expect(j.message || j.errors).to.be.ok; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Current Profile (Me)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{mhs_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/me",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "me"
+              ]
+            },
+            "description": ""
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response time is acceptable (< 5000ms)\", function () { pm.expect(pm.response.responseTime).to.be.below(5000); });",
+                  "pm.test(\"Response is valid JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"User data returned\", function () { var j = pm.response.json(); pm.expect(j.data.email).to.eql(\"mhs.si@test.com\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Connect Telegram Account",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{mhs_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/connect-telegram",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "connect-telegram"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"telegram_chat_id\": \"8112899977\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response time is acceptable (< 2500ms)\", function () { pm.expect(pm.response.responseTime).to.be.below(2500); });",
+                  "pm.test(\"Response is JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Telegram connected\", function () { var j = pm.response.json(); pm.expect(j.data.telegram_connected).to.eql(true); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Unauthenticated Access Rejection",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/me",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "me"
+              ]
+            },
+            "description": ""
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 401\", function () { pm.response.to.have.status(401); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "03. Reference Data",
+      "item": [
+        {
+          "name": "Get List Program Studi",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{mhs_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/ref/prodi",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "ref",
+                "prodi"
+              ]
+            },
+            "description": ""
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response time is acceptable (< 5000ms)\", function () { pm.expect(pm.response.responseTime).to.be.below(5000); });",
+                  "pm.test(\"Response is valid JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Returns prodi list\", function () { var j = pm.response.json(); pm.expect(j.data.length).to.be.above(0); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get List Tingkatan Lomba",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{mhs_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/ref/tingkatan",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "ref",
+                "tingkatan"
+              ]
+            },
+            "description": ""
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response time is acceptable (< 5000ms)\", function () { pm.expect(pm.response.responseTime).to.be.below(5000); });",
+                  "pm.test(\"Response is valid JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Returns tingkatan list\", function () { var j = pm.response.json(); pm.expect(j.data.length).to.be.above(0); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get List Tahapan Juara",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{mhs_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/ref/tahapan",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "ref",
+                "tahapan"
+              ]
+            },
+            "description": ""
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response time is acceptable (< 5000ms)\", function () { pm.expect(pm.response.responseTime).to.be.below(5000); });",
+                  "pm.test(\"Response is valid JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Returns tahapan list\", function () { var j = pm.response.json(); pm.expect(j.data.length).to.be.above(0); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get List Bidang Lomba",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{mhs_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/ref/bidang",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "ref",
+                "bidang"
+              ]
+            },
+            "description": ""
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response time is acceptable (< 5000ms)\", function () { pm.expect(pm.response.responseTime).to.be.below(5000); });",
+                  "pm.test(\"Response is valid JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Returns bidang list\", function () { var j = pm.response.json(); pm.expect(j.data.length).to.be.above(0); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Matriks Konversi Matrix",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{mhs_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/ref/matriks?tingkatan_id=1&tahapan_id=2",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "ref",
+                "matriks?tingkatan_id=1&tahapan_id=2"
+              ]
+            },
+            "description": ""
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response time is acceptable (< 5000ms)\", function () { pm.expect(pm.response.responseTime).to.be.below(5000); });",
+                  "pm.test(\"Response is valid JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Returns matriks details\", function () { var j = pm.response.json(); pm.expect(j.data).to.have.property('min_sks'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get List Mata Kuliah Available",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{mhs_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/ref/mata-kuliah?bidang_id=1&prodi_id=1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "ref",
+                "mata-kuliah?bidang_id=1&prodi_id=1"
+              ]
+            },
+            "description": ""
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response time is acceptable (< 5000ms)\", function () { pm.expect(pm.response.responseTime).to.be.below(5000); });",
+                  "pm.test(\"Response is valid JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Returns mata kuliah list\", function () { var j = pm.response.json(); pm.expect(j.data.length).to.be.above(0); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "04. Shared Modules",
+      "item": [
+        {
+          "name": "Get Dashboard Statistics",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{mhs_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/dashboard/statistik",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "dashboard",
+                "statistik"
+              ]
+            },
+            "description": ""
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response time is acceptable (< 5000ms)\", function () { pm.expect(pm.response.responseTime).to.be.below(5000); });",
+                  "pm.test(\"Response is valid JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Statistics structure valid\", function () { var j = pm.response.json(); pm.expect(j.data).to.have.property('grand_total'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Direktori Verifikator",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{mhs_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/direktori-verifikator",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "direktori-verifikator"
+              ]
+            },
+            "description": ""
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response time is acceptable (< 5000ms)\", function () { pm.expect(pm.response.responseTime).to.be.below(5000); });",
+                  "pm.test(\"Response is valid JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Directory list returned\", function () { var j = pm.response.json(); pm.expect(j.data).to.be.an('array'); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "05. Mahasiswa Module",
+      "item": [
+        {
+          "name": "Submit Pengajuan Prestasi (Happy Path)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{mhs_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/mahasiswa/pengajuan",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "mahasiswa",
+                "pengajuan"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nama_lomba\": \"Lomba UI/UX Design Nasional {{$timestamp}}\",\n  \"no_whatsapp\": \"081234567890\",\n  \"bidang_id\": 1,\n  \"tingkatan_id\": 1,\n  \"tahapan_id\": 2,\n  \"semester\": 5,\n  \"link_sertifikat\": \"https://drive.google.com/file/cert123\",\n  \"link_surat_tugas_mahasiswa\": \"https://drive.google.com/file/sk_mhs\",\n  \"link_surat_tugas_dosen\": \"https://drive.google.com/file/sk_dosen\",\n  \"link_poster\": \"https://drive.google.com/file/poster123\",\n  \"link_sosmed\": \"https://instagram.com/p/123\",\n  \"keterangan\": \"Pengajuan dari automated Newman test\",\n  \"mata_kuliah_ids\": [\n    1\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () { pm.response.to.have.status(201); });",
+                  "pm.test(\"Response time is acceptable (< 5000ms)\", function () { pm.expect(pm.response.responseTime).to.be.below(5000); });",
+                  "pm.test(\"Response is valid JSON\", function () { pm.response.to.be.json; });",
+                  "var j = pm.response.json(); pm.test(\"Pengajuan created\", function () { pm.expect(j.data.id).to.be.a('number'); pm.environment.set(\"pengajuan_id\", j.data.id); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Submit Rejection: SSRF URL Attempt",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{mhs_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/mahasiswa/pengajuan",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "mahasiswa",
+                "pengajuan"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nama_lomba\": \"SSRF Attack Simulation\",\n  \"bidang_id\": 1,\n  \"tingkatan_id\": 1,\n  \"tahapan_id\": 1,\n  \"semester\": 5,\n  \"link_sertifikat\": \"http://127.0.0.1:8000/internal-secret\",\n  \"mata_kuliah_ids\": [\n    1\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 422 (Unprocessable)\", function () { pm.response.to.have.status(422); });",
+                  "pm.test(\"Rejected with validation error\", function () { var j = pm.response.json(); pm.expect(j.errors).to.have.property('link_sertifikat'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get List Riwayat Pengajuan Mahasiswa",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{mhs_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/mahasiswa/pengajuan",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "mahasiswa",
+                "pengajuan"
+              ]
+            },
+            "description": ""
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response time is acceptable (< 5000ms)\", function () { pm.expect(pm.response.responseTime).to.be.below(5000); });",
+                  "pm.test(\"Response is valid JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"List returned with pagination\", function () { var j = pm.response.json(); pm.expect(j.data.items).to.be.an('array'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Detail Pengajuan Mahasiswa",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{mhs_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/mahasiswa/pengajuan/{{pengajuan_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "mahasiswa",
+                "pengajuan",
+                "{{pengajuan_id}}"
+              ]
+            },
+            "description": ""
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response time is acceptable (< 5000ms)\", function () { pm.expect(pm.response.responseTime).to.be.below(5000); });",
+                  "pm.test(\"Response is valid JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Detail matches pengajuan_id\", function () { var j = pm.response.json(); pm.expect(j.data.id).to.eql(parseInt(pm.environment.get(\"pengajuan_id\"))); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Non-Existent Pengajuan (404 Not Found)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{mhs_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/mahasiswa/pengajuan/99999",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "mahasiswa",
+                "pengajuan",
+                "99999"
+              ]
+            },
+            "description": ""
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 404\", function () { pm.response.to.have.status(404); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "06. Verifikator Module",
+      "item": [
+        {
+          "name": "Get Verifikator Pengajuan Queue List",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{verif_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/verifikator/pengajuan",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "verifikator",
+                "pengajuan"
+              ]
+            },
+            "description": ""
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response time is acceptable (< 5000ms)\", function () { pm.expect(pm.response.responseTime).to.be.below(5000); });",
+                  "pm.test(\"Response is valid JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Queue list returned\", function () { var j = pm.response.json(); pm.expect(j.data.items).to.be.an('array'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Verifikator Detail Pengajuan",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{verif_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/verifikator/pengajuan/{{pengajuan_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "verifikator",
+                "pengajuan",
+                "{{pengajuan_id}}"
+              ]
+            },
+            "description": ""
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response time is acceptable (< 5000ms)\", function () { pm.expect(pm.response.responseTime).to.be.below(5000); });",
+                  "pm.test(\"Response is valid JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Verifikator can see detail\", function () { var j = pm.response.json(); pm.expect(j.data.id).to.be.a('number'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Approve Pengajuan by Verifikator",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{verif_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/verifikator/pengajuan/{{pengajuan_id}}/terima",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "verifikator",
+                "pengajuan",
+                "{{pengajuan_id}}",
+                "terima"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"catatan_verifikator\": \"Memenuhi seluruh persyaratan konversi SKS.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response time is acceptable (< 5000ms)\", function () { pm.expect(pm.response.responseTime).to.be.below(5000); });",
+                  "pm.test(\"Response is valid JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Status changed to diterima\", function () { var j = pm.response.json(); pm.expect(j.data.status).to.eql(\"diterima\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Reject Without Reason Fails Validation (422)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{verif_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/verifikator/pengajuan/{{pengajuan_id}}/tolak",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "verifikator",
+                "pengajuan",
+                "{{pengajuan_id}}",
+                "tolak"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"alasan\": \"\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 422\", function () { pm.response.to.have.status(422); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Role Guard: Mahasiswa Access to Verifikator Endpoint Rejected (403)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{mhs_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/verifikator/pengajuan",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "verifikator",
+                "pengajuan"
+              ]
+            },
+            "description": ""
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 403 Forbidden\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "07. Tendik Module",
+      "item": [
+        {
+          "name": "Get Approved Pengajuan for Finalization",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tendik_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/tendik/pengajuan",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "tendik",
+                "pengajuan"
+              ]
+            },
+            "description": ""
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response time is acceptable (< 5000ms)\", function () { pm.expect(pm.response.responseTime).to.be.below(5000); });",
+                  "pm.test(\"Response is valid JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Tendik queue returned\", function () { var j = pm.response.json(); pm.expect(j.data.items).to.be.an('array'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Finalize Pengajuan Konversi",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tendik_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/tendik/pengajuan/{{pengajuan_id}}/finalisasi",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "tendik",
+                "pengajuan",
+                "{{pengajuan_id}}",
+                "finalisasi"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"catatan_tendik\": \"SK Konversi telah diproses dan terbit.\",\n  \"link_sk_konversi\": \"https://drive.google.com/file/sk123\",\n  \"nilai_per_mk\": [\n    {\n      \"mk_id\": 1,\n      \"huruf_nilai\": \"AB\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response time is acceptable (< 5000ms)\", function () { pm.expect(pm.response.responseTime).to.be.below(5000); });",
+                  "pm.test(\"Response is valid JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Status changed to selesai\", function () { var j = pm.response.json(); pm.expect(j.data.status).to.eql(\"selesai\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Export Data Prestasi Excel",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tendik_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/tendik/export",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "tendik",
+                "export"
+              ]
+            },
+            "description": ""
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response is file stream or success\", function () { pm.expect(pm.response.code).to.eql(200); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "08. Wadek Module",
+      "item": [
+        {
+          "name": "Get Matriks Konversi List",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{wadek_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/wadek/matriks",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "wadek",
+                "matriks"
+              ]
+            },
+            "description": ""
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response time is acceptable (< 5000ms)\", function () { pm.expect(pm.response.responseTime).to.be.below(5000); });",
+                  "pm.test(\"Response is valid JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Matriks list returned\", function () { var j = pm.response.json(); pm.expect(j.data).to.be.an('array'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Matriks Konversi Rules",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{wadek_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/wadek/matriks/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "wadek",
+                "matriks",
+                "1"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"min_sks\": 2,\n  \"max_sks\": 4,\n  \"huruf_nilai\": \"A\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response time is acceptable (< 5000ms)\", function () { pm.expect(pm.response.responseTime).to.be.below(5000); });",
+                  "pm.test(\"Response is valid JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Matriks updated successfully\", function () { var j = pm.response.json(); pm.expect(j.data.huruf_nilai).to.eql(\"A\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Tim Verifikator List",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{wadek_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/wadek/verifikator",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "wadek",
+                "verifikator"
+              ]
+            },
+            "description": ""
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response time is acceptable (< 5000ms)\", function () { pm.expect(pm.response.responseTime).to.be.below(5000); });",
+                  "pm.test(\"Response is valid JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Verifikator list returned\", function () { var j = pm.response.json(); pm.expect(j.data).to.be.an('array'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Mapping Bidang Mata Kuliah",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{wadek_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/wadek/bidang-mata-kuliah",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "wadek",
+                "bidang-mata-kuliah"
+              ]
+            },
+            "description": ""
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response time is acceptable (< 5000ms)\", function () { pm.expect(pm.response.responseTime).to.be.below(5000); });",
+                  "pm.test(\"Response is valid JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Bidang MK list returned\", function () { var j = pm.response.json(); pm.expect(j.data).to.be.an('array'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Role Guard: Mahasiswa Access to Wadek Rejected (403)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{mhs_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/wadek/matriks",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "wadek",
+                "matriks"
+              ]
+            },
+            "description": ""
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 403 Forbidden\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "09. Admin Module",
+      "item": [
+        {
+          "name": "Get Users List for Role Management",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/users",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "users"
+              ]
+            },
+            "description": ""
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response time is acceptable (< 5000ms)\", function () { pm.expect(pm.response.responseTime).to.be.below(5000); });",
+                  "pm.test(\"Response is valid JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Users list returned\", function () { var j = pm.response.json(); pm.expect(j.data.items).to.be.an('array'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Available Roles",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/available-roles",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "available-roles"
+              ]
+            },
+            "description": ""
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response time is acceptable (< 5000ms)\", function () { pm.expect(pm.response.responseTime).to.be.below(5000); });",
+                  "pm.test(\"Response is valid JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Available roles returned\", function () { var j = pm.response.json(); pm.expect(j.data.length).to.be.above(0); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Role Audit Trail History",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/role-history",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "role-history"
+              ]
+            },
+            "description": ""
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response time is acceptable (< 5000ms)\", function () { pm.expect(pm.response.responseTime).to.be.below(5000); });",
+                  "pm.test(\"Response is valid JSON\", function () { pm.response.to.be.json; });",
+                  "pm.test(\"Role history returned\", function () { var j = pm.response.json(); pm.expect(j.data).to.have.property('items'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Role Guard: Mahasiswa Access to Admin Rejected (403)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{mhs_token}}",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/users",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "users"
+              ]
+            },
+            "description": ""
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 403 Forbidden\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "10. Telegram Webhook",
+      "item": [
+        {
+          "name": "Send Ping to Telegram Webhook",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/telegram/webhook",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "telegram",
+                "webhook"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"update_id\": 10001,\n  \"message\": {\n    \"message_id\": 1,\n    \"from\": {\n      \"id\": 8112899977,\n      \"first_name\": \"TestUser\"\n    },\n    \"chat\": {\n      \"id\": 8112899977,\n      \"type\": \"private\"\n    },\n    \"text\": \"/ping\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Returns ok=true\", function () { var j = pm.response.json(); pm.expect(j.ok).to.eql(true); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

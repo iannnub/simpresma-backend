@@ -28,7 +28,8 @@ class AppServiceProvider extends ServiceProvider
         });
 
         RateLimiter::for('login', function (Request $request) {
-            return Limit::perMinute(5)->by($request->ip())->response(function () {
+            $maxAttempts = app()->environment('production') ? 5 : 120;
+            return Limit::perMinute($maxAttempts)->by($request->ip())->response(function () {
                 return response()->json([
                     'success' => false,
                     'status'  => 'error',

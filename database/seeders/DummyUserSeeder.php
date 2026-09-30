@@ -17,10 +17,20 @@ class DummyUserSeeder extends Seeder
         $prodiTI = Prodi::where('singkatan', 'TI')->first();
         $prodiIF = Prodi::where('singkatan', 'IF')->first();
 
+        $roleAdmin = Role::where('name', 'admin')->first();
         $roleMhs   = Role::where('name', 'mahasiswa')->first();
         $roleVerif = Role::where('name', 'verifikator')->first();
         $roleTendik = Role::where('name', 'tendik')->first();
         $roleWadek  = Role::where('name', 'wadek')->first();
+
+        // ─── Admin (Super Admin) ──────────────────────────────────────────
+        $admin = User::firstOrCreate(
+            ['email' => 'admin@simpresma.unej.ac.id'],
+            ['nim_nip' => 'ADMIN.001', 'nama' => 'Super Administrator', 'password' => Hash::make('admin123'), 'prodi_id' => null, 'no_whatsapp' => '08100000001']
+        );
+        if ($roleAdmin) {
+            $admin->roles()->syncWithoutDetaching([$roleAdmin->id]);
+        }
 
         // ─── Wadek (dibuat dulu karena jadi assigned_by di verifikator) ────
         $wadek = User::firstOrCreate(
