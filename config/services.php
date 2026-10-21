@@ -40,4 +40,13 @@ return [
         'bot_username' => env('TELEGRAM_BOT_USERNAME', 'simpresma_unej_bot'),
     ],
 
+    'gapura' => [
+        'url'                 => env('GAPURA_URL', 'https://gapura.unej.ac.id'),
+        'client_id'           => env('GAPURA_CLIENT_ID'),
+        'client_secret'       => env('GAPURA_CLIENT_SECRET'),
+        'redirect_uri'        => env('GAPURA_REDIRECT_URI', 'http://localhost:8000/api/auth/gapura/callback'),
+        'frontend_url'        => env('GAPURA_FRONTEND_CALLBACK_URL', 'http://localhost:5173/auth/callback'),
+        'logout_redirect_uri' => env('GAPURA_LOGOUT_REDIRECT_URI', 'http://localhost:5173/'),
+    ],
+
 ];
